@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import random
+import os
 
 def generate_random_color():
     color = "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -51,4 +52,8 @@ def plot_population_data(country_data_list):
 
     plt.tight_layout()
 
-    plt.savefig('graph.png')
+    # Crear una carpeta llamada "assets" si no existe
+    os.makedirs("assets", exist_ok=True)
+
+    # Guardar la imagen en la carpeta "assets" con el nombre "graph.png"
+    plt.savefig(os.path.join("assets", "graph.png"))

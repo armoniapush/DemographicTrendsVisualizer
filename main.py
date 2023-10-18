@@ -1,5 +1,4 @@
 import difflib
-
 from charts import plot_population_data
 from read_csv import read_csv
 
