@@ -12,44 +12,52 @@ def plot_population_data(data):
     # Extract columns containing population data
     population_columns = [col for col in data.columns if col.endswith(" Population")]
 
-    # Create a figure for the graph
-    plt.figure(figsize=(10, 6))
+    # Set the index of the DataFrame to the "Country/Territory" column
+    data = data.set_index("Country/Territory")
+
+    # Create a figure for the graph and set the background color to light gray
+    fig, ax = plt.subplots(figsize=(10, 6))
+    fig.set_facecolor('#f3f3f3')
 
     max_population = data[population_columns].max().max()
 
-    years = [col.split()[0] for col in population_columns]
+    # Invert the order of years directly in the DataFrame
+    data = data[population_columns].iloc[:, ::-1]
+    years = data.columns.str.split().str[0]
 
-    for _, row in data.iterrows():
+    for idx, row in data.iterrows():
         # Generate a random color for each country (important)
         color = generate_random_color()
 
-        populations = row[population_columns]
-
-        # Create a scatter plot with round points
-        plt.scatter(years, populations, color=color, marker='o', s=100, alpha=0.7, label=row["Country/Territory"])
+        # Create a scatter plot with round points, excluding white color
+        ax.scatter(years, row, color=color, marker='o', s=100, alpha=0.7, label=idx)
 
         # Connect the points with a white line of the same color
-        plt.plot(years, populations, color=color, linewidth=1, alpha=0.8, linestyle='--', marker='x')
+        ax.plot(years, row, color=color, linewidth=1, alpha=0.8, linestyle='--', marker='x')
 
-    plt.title('Population Evolution', color='black')
-    plt.xlabel('Year', color='black')
-    plt.ylabel('Population (in millions)', color='black')
+    ax.set_title('Population Evolution', color='black')
+    ax.set_xlabel('Year', color='black')
+    ax.set_ylabel('Population (in millions)', color='black')
 
     if max_population > 0:
-        plt.gca().yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x / 1e6:.0f}m'))
-        plt.gca().set_ylim(0, max_population * 1.1)
-        plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(base=max_population / 10))
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x / 1e6:.0f}m'))
+        ax.set_ylim(0, max_population * 1.1)
+        ax.yaxis.set_major_locator(ticker.MultipleLocator(base=max_population / 10))
 
-    plt.gca().tick_params(axis='x', rotation=45, colors='black')
-    plt.gca().tick_params(axis='y', colors='black')
+    ax.tick_params(axis='x', rotation=45, colors='black')
+    ax.tick_params(axis='y', colors='black')
 
-    plt.grid(axis='y', linestyle='--', alpha=0.2)
-    plt.legend()
+    # Ensure that the grid is behind the data
+    ax.set_axisbelow(True)
+    
+    # Display a grid with a darker color
+    ax.grid(axis='y', linestyle='--', alpha=0.2, color='gray')
+    ax.legend()
 
-    plt.tight_layout()
+    fig.tight_layout()
 
     # Create a folder named "assets" if it doesn't exist
     os.makedirs("assets", exist_ok=True)
 
     # Save the image in the "assets" folder with the name "graph.png"
-    plt.savefig(os.path.join("assets", "graph.png"))
+    fig.savefig(os.path.join("assets", "graph.png"))

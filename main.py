@@ -16,7 +16,7 @@ def find_best_matches(country_names, available_countries):
 if __name__ == '__main__':
     data = pd.read_csv('data.csv')
 
-    input_countries = input("Enter the names of the countries separated by commas or spaces (max 4): ").strip().lower()
+    input_countries = input("Enter the names of the countries separated by commas or spaces: ").strip().lower()
 
     user_countries = [country.strip() for country in input_countries.replace(',', ' ').split()]
 
