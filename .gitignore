@@ -179,6 +179,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+pg_310evn/
 
 # Spyder project settings
 .spyderproject
