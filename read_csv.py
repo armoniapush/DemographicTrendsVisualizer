@@ -1,24 +1,15 @@
-import csv
+import pandas as pd
 
 def read_csv(path):
-    data = []
     try:
-        with open(path, 'r') as csvfile:
-            reader = csv.DictReader(csvfile, delimiter=',')
-            for row in reader:
-                # Dictionary to store the country name and population data HERE =>
-                country_data = {'Country/Territory': row['Country/Territory']}
-                for key, value in row.items():
-                    if key.endswith(" Population"):
-                        country_data[key] = value
-                data.append(country_data)
+        data = pd.read_csv(path)
+        return data
     except FileNotFoundError:
         print(f'The file {path} does not exist.')
-    except csv.Error as e:
+        return pd.DataFrame()
+    except pd.errors.EmptyDataError:
+        print(f'The file {path} is empty.')
+        return pd.DataFrame()
+    except Exception as e:
         print(f'Error reading the file {path}: {e}')
-    return data
-
-if __name__ == '__main__':
-    data = read_csv('data.csv')
-    for entry in data:
-        print(entry)
+        return pd.DataFrame()

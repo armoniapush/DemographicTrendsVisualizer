@@ -1,6 +1,6 @@
 import difflib
+import pandas as pd
 from charts import plot_population_data
-from read_csv import read_csv
 
 def find_best_matches(country_names, available_countries):
     user_countries = [country.strip() for country in country_names.replace(',', ' ').split()]
@@ -14,18 +14,16 @@ def find_best_matches(country_names, available_countries):
     return best_matches
 
 if __name__ == '__main__':
-    data = read_csv('data.csv')
-
-    available_countries = [entry['Country/Territory'] for entry in data]
+    data = pd.read_csv('data.csv')
 
     input_countries = input("Enter the names of the countries separated by commas or spaces (max 4): ").strip().lower()
 
     user_countries = [country.strip() for country in input_countries.replace(',', ' ').split()]
 
-    matched_countries = find_best_matches(' '.join(user_countries), [country.lower() for country in available_countries])
+    matched_countries = find_best_matches(' '.join(user_countries), data['Country/Territory'].str.lower())
 
     if matched_countries:
         print("Generating Chart...")
-        plot_population_data([entry for entry in data if entry['Country/Territory'].title() in matched_countries])
+        plot_population_data(data[data['Country/Territory'].str.title().isin(matched_countries)])
     else:
         print("No close matches found for the entered countries.")
